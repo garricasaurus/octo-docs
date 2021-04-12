@@ -821,7 +821,7 @@ On branch cat-title
 nothing to commit, working tree clean
 ```
 
-Now we perform the file changes for our task (instead of using the below command you can edit and commit each file one-by-one of you like):
+Now we perform the file changes for our task (instead of using the below command you can edit and commit each file one-by-one if you like):
 
 ```
 for f in !(README).md ; do sed -i "1s;^;# $f\n\n;" "$f" && git add "$f" && git commit -m "add title to $f" ; done
