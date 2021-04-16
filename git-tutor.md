@@ -606,7 +606,37 @@ Switched to branch 'master'
 
 We got a warning: if don't tag or create the commits, soon they will be lost forever.
 
+## Restoring lost commits
+
+To find a commit which is not visible in `git log` use:
+
+```
+git reflog
+```
+
+```
+e6be47c (HEAD -> master, tag: v1.0.0) HEAD@{0}: checkout: moving from 08da7f2 to master
+08da7f2 HEAD@{1}: checkout: moving from master to 08da7f2
+e6be47c (HEAD -> master, tag: v1.0.0) HEAD@{2}: reset: moving to v1.0.0
+08da7f2 HEAD@{3}: revert: Revert "rename bengal"
+e6be47c HEAD@{4}: commit: rename bengal
+```
+
+If reflog doesn't fit the screen, it will open the default pager (usually `less`, where you can use the `q` key to quit).
+
+To _reset_ HEAD to to the desired lost commit use:
+
+```
+git reset --hard HEAD@{4}
+```
+
 ## Amending commits
+
+Now reset `master` to `v1.0.0` again:
+
+```
+git reset --hard v1.0.0
+```
 
 Let's add a new cat breed:
 
@@ -1821,10 +1851,12 @@ hint: 'git pull ...') before pushing again.
 hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 ```
 
-To force the remote to accept our version of the history and overwrite its own:
+You can _force_ the remote to accept our version of the history and overwrite its own. This can cause additional work for your fellow committers, so only use it, when you're sure that rewriting the history doesn't bother anyone.
+
+Now let's force push our version:
 
 ```
-git push --force
+git push --force-with-lease
 ```
 
 ```
@@ -1837,6 +1869,11 @@ Total 10 (delta 2), reused 0 (delta 0), pack-reused 0
 To ../git-tutor.git
  + d9ab67e...ef72f03 master -> master (forced update)
 ```
+
+The `--force-with-lease` flag is a safer version of `--force`: it will refuse to update a branch if the branch has been updated upstream.
+In practical scenarios we can use _amend_ and _force_ to overwrite changes in opened pull requests instead of creating new commits.
+
+Let's check the rewritten history in the logs:
 
 ```
 git ll
