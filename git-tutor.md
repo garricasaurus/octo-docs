@@ -606,7 +606,37 @@ Switched to branch 'master'
 
 We got a warning: if don't tag or create the commits, soon they will be lost forever.
 
+## Restoring lost commits
+
+To find a commit which is not visible in `git log` use:
+
+```
+git reflog
+```
+
+```
+e6be47c (HEAD -> master, tag: v1.0.0) HEAD@{0}: checkout: moving from 08da7f2 to master
+08da7f2 HEAD@{1}: checkout: moving from master to 08da7f2
+e6be47c (HEAD -> master, tag: v1.0.0) HEAD@{2}: reset: moving to v1.0.0
+08da7f2 HEAD@{3}: revert: Revert "rename bengal"
+e6be47c HEAD@{4}: commit: rename bengal
+```
+
+If reflog doesn't fit the screen, it will open the default pager (usually `less`, where you can use the `q` key to quit).
+
+To _reset_ HEAD to to the desired lost commit use:
+
+```
+git reset --hard HEAD@{4}
+```
+
 ## Amending commits
+
+Now reset `master` to `v1.0.0` again:
+
+```
+git reset --hard v1.0.0
+```
 
 Let's add a new cat breed:
 
@@ -666,27 +696,6 @@ ad0e552 (tag: v0.9.9, tag: first) first commit
 ```
 
 The log is nice and clean, and no extra commit was created for our fix.
-
-## Restoring lost commits
-
-To find a commit which is not visible in `git log` use:
-```
-git reflog
-```
-
-```
-eff544f HEAD@{0}: commit: migrate existing content
-bf871fd HEAD@{1}: commit: Add Git Reflog outline
-9a4491f HEAD@{2}: checkout: moving from master to git_reflog
-39b159a HEAD@{3}: commit: expand on git context 
-```
-
-If reflog doesn't fit the screen, use `q` key to quit.
-Then _reset_ HEAD to to the desired commit:
-
-```
-git reset --hard HEAD@{2}
-```
 
 # Peek into the `.git` directory
 
@@ -1842,14 +1851,12 @@ hint: 'git pull ...') before pushing again.
 hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 ```
 
-You can _force_ the remote to accept our version of the history and overwrite its own. However, this can cause additional work for your fellow committers. If you're sure rewriting the history doesn't bother anyone, use:
+You can _force_ the remote to accept our version of the history and overwrite its own. This can cause additional work for your fellow committers, so only use it, when you're sure that rewriting the history doesn't bother anyone.
+
+Now let's force push our version:
 
 ```
 git push --force-with-lease
-```
-which is a safer version of
-```
-git push --force
 ```
 
 ```
@@ -1863,7 +1870,10 @@ To ../git-tutor.git
  + d9ab67e...ef72f03 master -> master (forced update)
 ```
 
-Use _amend_ and _force_ to overwrite changes in opened pull requests instead of creating new commits.
+The `--force-with-lease` flag is a safer version of `--force`: it will refuse to update a branch if the branch has been updated upstream.
+In practical scenarios we can use _amend_ and _force_ to overwrite changes in opened pull requests instead of creating new commits.
+
+Let's check the rewritten history in the logs:
 
 ```
 git ll
