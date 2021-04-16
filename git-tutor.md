@@ -667,6 +667,27 @@ ad0e552 (tag: v0.9.9, tag: first) first commit
 
 The log is nice and clean, and no extra commit was created for our fix.
 
+## Restoring lost commits
+
+To find a commit which is not visible in `git log` use:
+```
+git reflog
+```
+
+```
+eff544f HEAD@{0}: commit: migrate existing content
+bf871fd HEAD@{1}: commit: Add Git Reflog outline
+9a4491f HEAD@{2}: checkout: moving from master to git_reflog
+39b159a HEAD@{3}: commit: expand on git context 
+```
+
+If reflog doesn't fit the screen, use `q` key to quit.
+Then _reset_ HEAD to to the desired commit:
+
+```
+git reset --hard HEAD@{2}
+```
+
 # Peek into the `.git` directory
 
 `git` stores its internals in the `.git` directory:
@@ -1821,8 +1842,12 @@ hint: 'git pull ...') before pushing again.
 hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 ```
 
-To force the remote to accept our version of the history and overwrite its own:
+You can _force_ the remote to accept our version of the history and overwrite its own. However, this can cause additional work for your fellow committers. If you're sure rewriting the history doesn't bother anyone, use:
 
+```
+git push --force-with-lease
+```
+which is a safer version of
 ```
 git push --force
 ```
@@ -1837,6 +1862,8 @@ Total 10 (delta 2), reused 0 (delta 0), pack-reused 0
 To ../git-tutor.git
  + d9ab67e...ef72f03 master -> master (forced update)
 ```
+
+Use _amend_ and _force_ to overwrite changes in opened pull requests instead of creating new commits.
 
 ```
 git ll
